@@ -3,19 +3,30 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ProjectResource;
 use App\Http\Resources\TaskResource;
 use App\Http\Resources\TaskResourceCollection;
 use App\Models\Project;
 use App\Models\Task;
+use App\Services\TaskService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class TaskController extends Controller
 {
-    public function index(Project $project)
+    protected $taskService;
+    public function __construct(TaskService $taskService)
     {
-        return new TaskResourceCollection($project->tasks);
+        $this->taskService= $taskService;
+    }
+
+    public function index(Project $project):JsonResponse
+    {
+        return $this->response(
+            Response::HTTP_OK,
+            'success',
+            new TaskResourceCollection($this->taskService->listTasks($project))
+        );
     }
 
     public function store(Request $request, Project $project)
@@ -25,8 +36,7 @@ class TaskController extends Controller
             'description'=> ['nullable']
         ], $request->all());
 
-        $project->tasks()
-            ->create($request->only('name', 'description'));
+        $this->taskService->createTask($request, $project);
 
         return $this->response(
             Response::HTTP_CREATED,
@@ -52,7 +62,7 @@ class TaskController extends Controller
             'description'=> ['nullable']
         ], $request->all());
 
-        $task->update($request->only(['name', 'complete', 'description']));
+       $this->taskService->updateTask($request, $task);
 
         return $this->response(
             Response::HTTP_OK,
@@ -63,7 +73,7 @@ class TaskController extends Controller
 
     public function destroy(Project $project, Task $task)
     {
-        $task->delete();
+        $this->taskService->deleteTask($task);
 
         return $this->response(
             Response::HTTP_OK,

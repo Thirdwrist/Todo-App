@@ -6,21 +6,26 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectResourceCollection;
 use App\Models\Project;
-use function auth;
+use App\Services\ProjectService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProjectController extends Controller
 {
+    protected $projectService;
+
+    public function __construct(ProjectService $projectService)
+    {
+        $this->projectService = $projectService;
+    }
 
     public function index() :JsonResponse
     {
         return $this->response(
             Response::HTTP_OK,
             'fetched successfully',
-            new ProjectResourceCollection(Project::all())
+            new ProjectResourceCollection($this->projectService->listProjects())
         );
     }
 
@@ -31,13 +36,8 @@ class ProjectController extends Controller
             'description'=>['nullable'],
         ], $request->all());
 
-      Project::create([
-          'name'=>$request->name,
-          'description'=>$request->description??null,
-          'user_id'=>auth()->id()
-      ]);
-
-      return $this->response(Response::HTTP_CREATED, 'created successfully');
+        $this->projectService->createProject($request);
+        return $this->response(Response::HTTP_CREATED, 'created successfully');
     }
 
     public function show(Project $project) :JsonResponse
@@ -51,7 +51,7 @@ class ProjectController extends Controller
 
     public function update(Request $request, Project $project) :JsonResponse
     {
-        $project->update($request->only(['name', 'description']));
+        $this->projectService->updateProject($request, $project);
 
         return $this->response(
             Response::HTTP_OK,
@@ -62,7 +62,7 @@ class ProjectController extends Controller
 
     public function destroy(Project $project) :JsonResponse
     {
-        $project->delete();
+        $this->projectService->deleteProject($project);
 
         return $this->response(
             Response::HTTP_OK,
