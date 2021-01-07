@@ -12,6 +12,10 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    protected Const FETCHED = 'fetched successfully';
+    protected Const CREATED = 'created successfully';
+    protected Const ARCHIVED = 'archived successfully';
+    protected const UPDATED = 'updated successfully';
 
     protected function response(int $statusCode, string $message,  $data = []) :JsonResponse
     {

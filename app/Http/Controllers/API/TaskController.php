@@ -24,12 +24,12 @@ class TaskController extends Controller
     {
         return $this->response(
             Response::HTTP_OK,
-            'success',
+            self::FETCHED,
             new TaskResourceCollection($this->taskService->listTasks($project))
         );
     }
 
-    public function store(Request $request, Project $project)
+    public function store(Request $request, Project $project):JsonResponse
     {
         $request->validate([
             'name'=>['required'],
@@ -40,21 +40,21 @@ class TaskController extends Controller
 
         return $this->response(
             Response::HTTP_CREATED,
-            'created successfully'
+            self::CREATED
         );
 
     }
 
-    public function show(Project $project, Task $task)
+    public function show(Task $task):JsonResponse
     {
         return $this->response(
             Response::HTTP_OK,
-            'success',
+            self::FETCHED,
             ['task'=> new TaskResource($task)]
         );
     }
 
-    public function update(Request $request, Project $project, Task $task)
+    public function update(Request $request, Task $task):JsonResponse
     {
         $request->validate([
             'name'=>['nullable'],
@@ -66,18 +66,31 @@ class TaskController extends Controller
 
         return $this->response(
             Response::HTTP_OK,
-            'updated successfully',
+            self::UPDATED,
             [ 'task' => new TaskResource($task->refresh())]
         );
     }
 
-    public function destroy(Project $project, Task $task)
+    public function bulkComplete(Request $request):JsonResponse
+    {
+        $request->validate([
+            'tasks'=>['array'],
+            'tasks.id*'=> ['exists:tasks'],
+            'complete'=> ['bool']
+        ]);
+
+        $this->taskService->bulkCompleteTasks($request);
+
+        return $this->response(Response::HTTP_OK, self::UPDATED);
+    }
+
+    public function destroy(Task $task):JsonResponse
     {
         $this->taskService->deleteTask($task);
 
         return $this->response(
             Response::HTTP_OK,
-            'archived successfully'
+            self::ARCHIVED
         );
     }
 }

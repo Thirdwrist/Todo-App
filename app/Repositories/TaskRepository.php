@@ -29,6 +29,11 @@ class TaskRepository
         return $task->update($data);
     }
 
+    public function bulkComplete(array $array, bool $complete):bool
+    {
+        return Task::whereIn('id', $array)->update(['complete'=>$complete]);
+    }
+
     public function find($id):Task
     {
         return Task::find($id);

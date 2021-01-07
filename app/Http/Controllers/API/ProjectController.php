@@ -24,7 +24,7 @@ class ProjectController extends Controller
     {
         return $this->response(
             Response::HTTP_OK,
-            'fetched successfully',
+            self::FETCHED,
             new ProjectResourceCollection($this->projectService->listProjects())
         );
     }
@@ -37,14 +37,14 @@ class ProjectController extends Controller
         ], $request->all());
 
         $this->projectService->createProject($request);
-        return $this->response(Response::HTTP_CREATED, 'created successfully');
+        return $this->response(Response::HTTP_CREATED, self::CREATED);
     }
 
     public function show(Project $project) :JsonResponse
     {
         return $this->response(
             Response::HTTP_OK,
-            'success',
+            self::FETCHED,
             [ 'project' => new ProjectResource($project)]
         );
     }
@@ -55,7 +55,7 @@ class ProjectController extends Controller
 
         return $this->response(
             Response::HTTP_OK,
-            'updated successfully',
+            self::UPDATED,
             [ 'project' => new ProjectResource($project->refresh())]
         );
     }
@@ -66,7 +66,7 @@ class ProjectController extends Controller
 
         return $this->response(
             Response::HTTP_OK,
-            'archived successfully'
+            self::ARCHIVED
         );
     }
 }

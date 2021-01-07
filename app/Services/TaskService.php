@@ -43,6 +43,14 @@ class TaskService
         ]), $task);
     }
 
+    public function bulkCompleteTasks(Request $request):bool
+    {
+        return $this->taskRepository->bulkComplete(
+            $request->tasks,
+            $request->complete
+        );
+    }
+
     public function findTaskById(int $id):Task
     {
         return $this->taskRepository->find($id);
