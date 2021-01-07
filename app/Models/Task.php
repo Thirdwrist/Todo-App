@@ -11,6 +11,11 @@ class Task extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $guarded = [
+        'created_at',
+        'updated_at'
+    ];
+
     public function project() :BelongsTo
     {
         return $this->belongsTo(Project::class);

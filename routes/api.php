@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\ProjectController;
 use App\Http\Controllers\API\TaskController;
+use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
@@ -19,9 +20,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->group(static function(){
     Route::apiResources([
-        'tasks'=> TaskController::class,
+        'projects.tasks'=> TaskController::class,
         'projects'=>ProjectController::class
     ]);
+
+    Route::get('users/{user}/projects', [UserController::class, 'projects']);
 });
 
 Route::post('login', [AuthController::class, 'login']);

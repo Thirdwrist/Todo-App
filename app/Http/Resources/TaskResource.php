@@ -11,7 +11,11 @@ class TaskResource extends JsonResource
     {
         return [
             'id'=>$this->id,
-//            /
+            'name'=> $this->name,
+            'description' => $this->description,
+            'complete'=> $this->complete,
+            'created_at'=> $this->created_at,
+            'deleted_at'=> $this->deleted_at
         ];
     }
 }

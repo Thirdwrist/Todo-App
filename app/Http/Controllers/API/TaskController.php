@@ -3,62 +3,71 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProjectResource;
+use App\Http\Resources\TaskResource;
+use App\Http\Resources\TaskResourceCollection;
+use App\Models\Project;
+use App\Models\Task;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(Project $project)
     {
-        //
+        return new TaskResourceCollection($project->tasks);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(Request $request, Project $project)
     {
-        //
+        $request->validate([
+            'name'=>['required'],
+            'description'=> ['nullable']
+        ], $request->all());
+
+        $project->tasks()
+            ->create($request->only('name', 'description'));
+
+        return $this->response(
+            Response::HTTP_CREATED,
+            'created successfully'
+        );
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function show(Project $project, Task $task)
     {
-        //
+        return $this->response(
+            Response::HTTP_OK,
+            'success',
+            ['task'=> new TaskResource($task)]
+        );
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request, Project $project, Task $task)
     {
-        //
+        $request->validate([
+            'name'=>['nullable'],
+            'complete'=>['nullable', 'boolean'],
+            'description'=> ['nullable']
+        ], $request->all());
+
+        $task->update($request->only(['name', 'complete', 'description']));
+
+        return $this->response(
+            Response::HTTP_OK,
+            'updated successfully',
+            [ 'task' => new TaskResource($task->refresh())]
+        );
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function destroy(Project $project, Task $task)
     {
-        //
+        $task->delete();
+
+        return $this->response(
+            Response::HTTP_OK,
+            'archived successfully'
+        );
     }
 }

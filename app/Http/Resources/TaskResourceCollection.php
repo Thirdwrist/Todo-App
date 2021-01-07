@@ -8,6 +8,8 @@ class TaskResourceCollection extends ResourceCollection
 {
     public function toArray($request):array
     {
-        return parent::toArray($request);
+        return [
+            'tasks'=> $this->collection
+        ];
     }
 }

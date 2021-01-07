@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use function optional;
 
 class ProjectResource extends JsonResource
 {
@@ -15,7 +14,7 @@ class ProjectResource extends JsonResource
             'description'=>$this->description,
             'created_at'=>$this->created_at->diffForHumans(),
             'deleted_at'=>optional($this->deleted_at)->diffForHumans(),
-            'tasks'=>new TaskResourceCollection($this->tasks),
+            'tasks'=>TaskResource::collection($this->tasks),
             'user'=>new UserResource($this->user)
         ];
     }
