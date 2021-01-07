@@ -6,7 +6,6 @@ namespace App\Services;
 
 use App\Models\Project;
 use App\Repositories\ProjectRepository;
-use function auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 

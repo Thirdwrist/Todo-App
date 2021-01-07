@@ -66,8 +66,7 @@ class TaskController extends Controller
 
         return $this->response(
             Response::HTTP_OK,
-            self::UPDATED,
-            [ 'task' => new TaskResource($task->refresh())]
+            self::UPDATED
         );
     }
 

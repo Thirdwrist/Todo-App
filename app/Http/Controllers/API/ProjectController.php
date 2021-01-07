@@ -55,8 +55,7 @@ class ProjectController extends Controller
 
         return $this->response(
             Response::HTTP_OK,
-            self::UPDATED,
-            [ 'project' => new ProjectResource($project->refresh())]
+            self::UPDATED
         );
     }
 

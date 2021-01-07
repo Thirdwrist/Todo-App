@@ -29,7 +29,7 @@ class AuthController extends Controller
     public function me() :JsonResponse
     {
         $user = new UserResource(auth()->user());
-        return $this->response(Response::HTTP_OK, 'fetched successfully', ['profile'=>$user]);
+        return $this->response(Response::HTTP_OK, self::FETCHED, ['profile'=>$user]);
     }
 
     public function logout() :JsonResponse
@@ -51,6 +51,6 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60
         ];
-        return $this->response(Response::HTTP_OK, 'accepted', $data);
+        return $this->response(Response::HTTP_OK, self::FETCHED, $data);
     }
 }
